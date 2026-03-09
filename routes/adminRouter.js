@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express();
+const router = express.Router();
 const adminModel = require("../models/admin-model");
 
 if (process.env.NODE_ENV === "development") {
