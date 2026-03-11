@@ -23,7 +23,7 @@ module.exports.registerUser = async function (req, res) {
 
           let token = generateToken(user);
           res.cookie("token", token);
-          res.send("USERS SUCCESSFULL");
+          res.redirect("/shop");
         }
       });
     });

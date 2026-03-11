@@ -8,6 +8,7 @@ const productsRouter = require("./routes/productsRouter");
 const indexRouter = require("./routes/indexRouter");
 const flash = require("connect-flash");
 const expressSession = require("express-session");
+const currentPath = require("./middlewares/currentPage");
 
 require("dotenv").config();
 
@@ -27,6 +28,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 
+app.use(currentPath);
 app.use("/", indexRouter);
 app.use("/admin", adminRouter);
 app.use("/users", usersRouter);

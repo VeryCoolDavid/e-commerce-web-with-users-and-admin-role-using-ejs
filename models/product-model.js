@@ -1,16 +1,16 @@
 const { text } = require("express");
 const mongoose = require("mongoose");
 const productSchema = mongoose.Schema({
-  image: String,
+  image: Buffer,
   name: String,
   price: Number,
   discount: {
     type: Number,
     default: 0,
   },
-  bgcolor: String,
-  panelcolor: String,
-  textcolor: String,
+  bgColor: String,
+  panelColor: String,
+  textColor: String,
 });
 
 module.exports = mongoose.model("product", productSchema);
