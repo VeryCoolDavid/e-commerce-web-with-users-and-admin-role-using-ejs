@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
     "config": "^4.4.1",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.7",
@@ -9,6 +9,7 @@
     "ejs": "^5.0.1",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
+    "flash": "^1.1.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.2.4",
     "multer": "^2.1.1"

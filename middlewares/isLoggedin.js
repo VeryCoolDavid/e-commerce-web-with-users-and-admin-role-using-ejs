@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/user-model");
+const adminModel = require("../models/admin-model");
 
-module.exports = async function (req, res, next) {
+module.exports.logged = async function (req, res, next) {
   if (!req.cookies.token) {
     req.flash("error", "You need to login");
-    return res.redirect("/");
+    return res.redirect("/login");
   }
   try {
     let decoded = jwt.verify(req.cookies.token, process.env.JWT_KEY);
@@ -18,6 +19,24 @@ module.exports = async function (req, res, next) {
     next();
   } catch (err) {
     req.flash("error", "you need to login");
-    res.redirect("/");
+    res.redirect("/login");
+  }
+};
+module.exports.isAdmin = async function (req, res, next) {
+  if (!req.cookies.token) {
+    req.flash("error", "you need to login");
+    return res.redirect("/admin");
+  }
+  try {
+    let decoded = jwt.verify(req.cookies.token, process.env.JWT_ADMIN);
+    await adminModel
+      .findOne({
+        email: decoded.email,
+      })
+      .select("-password");
+    next();
+  } catch (err) {
+    req.flash("error", "you need to login");
+    res.redirect("/admin");
   }
 };

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <%- include('./partials/header') %> <% if(success.length>0){ %>
+    <div
+      class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-blue-500"
+    >
+      <span class="inline-block mt-1 mb-1 text-white"> <%= success %> </span>
+    </div>
+    <% } %>
+    <div class="w-full h-screen flex items-start gap-5 px-20 py-20">
+      <div class="w-[25%] flex bg-zinc-300 h-screen flex-col items-start">
+        <div class="flex flex-col text-blue p-4">
+          <a class="block w-fit mb-2" href="/admin/create"
+            >Create new product</a
+          >
+        </div>
+      </div>
+      <div class="w-[75%] flex flex-col gap-5 h-screen">
+        <div class="flex justify-between items-center">
+          <h2 class="text-2xl">All Products</h2>
+          <form
+            class="text-red-500 bg-zinc-100 rounded-md px-2 py-3"
+            action="/admin/delete"
+            method="POST"
+          >
+            <button class="hover:text-red-800">Delete all</button>
+          </form>
+        </div>
+        <div class="flex items-start gap-5">
+          <% Products.forEach(function(product){ %>
+          <div class="w-60">
+            <div
+              class="w-full h-52 flex items-center justify-center bg-[<%= product.bgColor %>]"
+            >
+              <img
+                class="h-[12rem]"
+                src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
+                alt="product image"
+              />
+            </div>
+            <div
+              class="flex justify-between items-center px-4 py-4 bg-[<%= product.panelColor %>] text-[<%= product.textColor %>]"
+            >
+              <div>
+                <h3><%= product.name %></h3>
+                <h4>₹<%= product.price %></h4>
+              </div>
+              <form action="/admin/delete/<%= product._id %>" method="post">
+                <button
+                  class="w-7 h-7 flex items-center justify-center rounded-full bg-white"
+                >
+                  <i class="ri-delete-bin-fill"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+    <%- include('./partials/footer') %>
+  </body>
+</html>

@@ -1,21 +1,25 @@
 const express = require("express");
-const isLoggedin = require("../middlewares/isLoggedin");
+const {logged} = require("../middlewares/isLoggedin");
 const router = express.Router();
 const productModel = require("../models/product-model");
 const userModel = require("../models/user-model");
 
-router.get("/", function (req, res) {
+
+router.get("/", function(req,res){
+  res.render("home")
+})
+router.get("/login", function (req, res) {
   let error = req.flash("error");
-  res.render("index", { error, isLoggedin: false });
+  res.render("index", { error, logged: false });
 });
 
-router.get("/shop", isLoggedin, async function (req, res) {
+router.get("/shop", logged, async function (req, res) {
   let success = req.flash("success");
   let Products = await productModel.find();
   res.render("shop", { Products, success });
 });
 
-router.get("/cart", isLoggedin, async function (req, res) {
+router.get("/cart", logged, async function (req, res) {
   let user = await userModel
     .findOne({ email: req.user.email })
     .populate("cart");
@@ -23,7 +27,7 @@ router.get("/cart", isLoggedin, async function (req, res) {
   res.render("cart", { user, bill });
 });
 
-router.get("/addtocart/:productID", isLoggedin, async function (req, res) {
+router.get("/addtocart/:productID", logged, async function (req, res) {
   let user = await userModel.findOne({ email: req.user.email });
   user.cart.push(req.params.productID);
   await user.save();

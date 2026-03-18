@@ -5,3 +5,9 @@ const generateToken = (user) => {
 };
 
 module.exports.generateToken = generateToken;
+
+const generateTokenAdmin = (admin) => {
+  return jwt.sign({ email: admin.email, id: admin._id }, process.env.JWT_ADMIN);
+};
+
+module.exports.generateTokenAdmin = generateTokenAdmin;
