@@ -1,42 +1,28 @@
-const jwt = require("jsonwebtoken");
 const userModel = require("../models/user-model");
-const adminModel = require("../models/admin-model");
+const { verifyToken } = require("../utils/jwt");
 
 module.exports.logged = async function (req, res, next) {
-  if (!req.cookies.token) {
+  const token = req.cookies.token;
+  if (!token) {
     req.flash("error", "You need to login");
-    return res.redirect("/login");
+    return res.redirect("/");
   }
   try {
-    let decoded = jwt.verify(req.cookies.token, process.env.JWT_KEY);
+    const decoded = verifyToken(token);
     let user = await userModel
       .findOne({
-        email: decoded.email,
+        _id: decoded.id,
       })
       .select("-password");
+    if (!user) {
+      req.flash("error", "User not found");
+      return res.redirect("/");
+    }
 
     req.user = user;
     next();
   } catch (err) {
-    req.flash("error", "you need to login");
-    res.redirect("/login");
-  }
-};
-module.exports.isAdmin = async function (req, res, next) {
-  if (!req.cookies.token) {
-    req.flash("error", "you need to login");
-    return res.redirect("/admin");
-  }
-  try {
-    let decoded = jwt.verify(req.cookies.token, process.env.JWT_ADMIN);
-    await adminModel
-      .findOne({
-        email: decoded.email,
-      })
-      .select("-password");
-    next();
-  } catch (err) {
-    req.flash("error", "you need to login");
-    res.redirect("/admin");
+    req.flash("error", "Invalid or expired session");
+    res.redirect("/");
   }
 };

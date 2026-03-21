@@ -1,14 +1,10 @@
 const express = require("express");
-const {logged} = require("../middlewares/isLoggedin");
+const { logged } = require("../middlewares/isLoggedin");
 const router = express.Router();
 const productModel = require("../models/product-model");
 const userModel = require("../models/user-model");
 
-
-router.get("/", function(req,res){
-  res.render("home")
-})
-router.get("/login", function (req, res) {
+router.get("/", function (req, res) {
   let error = req.flash("error");
   res.render("index", { error, logged: false });
 });
