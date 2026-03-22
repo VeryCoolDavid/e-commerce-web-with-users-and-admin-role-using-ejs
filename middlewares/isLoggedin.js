@@ -9,11 +9,7 @@ module.exports.logged = async function (req, res, next) {
   }
   try {
     const decoded = verifyToken(token);
-    let user = await userModel
-      .findOne({
-        _id: decoded.id,
-      })
-      .select("-password");
+    const user = await userModel.findById(decoded.id).select("-password");
     if (!user) {
       req.flash("error", "User not found");
       return res.redirect("/");
@@ -25,4 +21,11 @@ module.exports.logged = async function (req, res, next) {
     req.flash("error", "Invalid or expired session");
     res.redirect("/");
   }
+};
+module.exports.isAdmin = function (req, res, next) {
+  if (req.user.role !== "admin") {
+    req.flash("error", "Forbidden");
+    return res.status(403).redirect("/");
+  }
+  next();
 };

@@ -7,91 +7,149 @@
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body>
-    <% if(success.length>0){ %>
+    <% if(error.length>0){ %>
+    <div
+      class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-red-500"
+    >
+      <span class="inline-block mt-1 mb-1 text-white"> <%= error[0] %></span>
+    </div>
+    <% } %> <% if(success.length>0){ %>
     <div
       class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-blue-500"
     >
       <span class="inline-block mt-1 mb-1 text-white"> <%= success %> </span>
     </div>
     <% } %>
-    <div class="min-h-screen flex flex-col">
-      <div class="container px-10 py-20 flex flex-grow">
-        <div class="w-[25%] flex h-screen flex-col items-start">
-          <div class="flex flex-col">
-            <a class="block w-fit mb-2" href="/admin/product">All Products</a>
-          </div>
-        </div>
-        <main class="w-3/4 bg-white p-8 shadow ml-4">
-          <h2 class="text-xl font-bold mb-4">Create New Product</h2>
-          <form
-            autocomplete="off"
-            action="/products/create"
-            method="post"
-            enctype="multipart/form-data"
-          >
-            <div class="mb-6">
-              <h3 class="text-lg font-semibold mb-2">Product Details</h3>
-              <div class="mb-4">
-                <label class="block mb-2 font-medium">Product Image</label>
-                <input
-                  name="image"
-                  type="file"
-                  class="py-2 px-4 rounded"
-                  value="Select File"
-                />
-              </div>
-              <div class="grid grid-cols-2 gap-4">
-                <input
-                  name="name"
-                  type="text"
-                  placeholder="Product Name"
-                  class="border p-2 rounded w-full"
-                />
-                <input
-                  name="price"
-                  type="text"
-                  placeholder="Product Price"
-                  class="border p-2 rounded w-full"
-                />
-                <input
-                  name="discount"
-                  type="text"
-                  placeholder="Discount Price"
-                  class="border p-2 rounded w-full"
-                />
-              </div>
-            </div>
 
-            <div>
-              <h3 class="text-lg font-semibold mb-2">Panel Details</h3>
-              <div class="grid grid-cols-2 gap-4">
-                <input
-                  name="bgColor"
-                  type="text"
-                  placeholder="Background Color"
-                  class="border p-2 rounded w-full"
-                />
-                <input
-                  name="panelColor"
-                  type="text"
-                  placeholder="Panel Color"
-                  class="border p-2 rounded w-full"
-                />
-                <input
-                  name="textColor"
-                  type="text"
-                  placeholder="Text Color"
-                  class="border p-2 rounded w-full"
-                />
-              </div>
+    <div class="min-h-screen flex flex-col justify-center items-center">
+      <main class="w-3/4 bg-white p-8 shadow">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">Create New Product</h2>
+          <a class="rounded-full text-white text-lg px-4 py-2 bg-pink-500" href="/admin"
+            >D</a
+          >
+        </div>
+        <form
+          autocomplete="off"
+          action="/products/create"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-2">Product Details</h3>
+            <div class="mb-4">
+              <label class="block mb-2 font-medium">Product Image</label>
+              <input
+                name="image"
+                type="file"
+                class="py-2 px-4 rounded"
+                value="Select File"
+                required
+              />
             </div>
+            <div class="grid grid-cols-2 gap-4">
+              <input
+                name="name"
+                type="text"
+                placeholder="Product Name"
+                required
+                class="border p-2 rounded w-full"
+              />
+              <input
+                name="price"
+                type="text"
+                placeholder="Product Price"
+                required
+                class="border p-2 rounded w-full"
+              />
+              <input
+                name="discount"
+                type="text"
+                placeholder="Discount %"
+                min="0"
+                max="100"
+                class="border p-2 rounded w-full"
+              />
+              <select
+                class="border p-2 rounded w-full"
+                name="category"
+                required
+              >
+                <option value="">Select Category</option>
+                <option value="T-shirt">T-shirt</option>
+                <option value="Shirt">Shirt</option>
+                <option value="Jackets">Jackets</option>
+                <option value="Jeans">Jeans</option>
+                <option value="Trousers">Trousers</option>
+                <option value="Shorts">Shorts</option>
+                <option value="Hoodies & Sweatshirts">
+                  Hoodies & Sweatshirts
+                </option>
+              </select>
+              <input
+                type="number"
+                name="stock"
+                placeholder="Stock quantity (in numbers)"
+                min="0"
+                class="border p-2 rounded w-full"
+                required
+              />
+              <textarea
+                name="description"
+                placeholder="Product description"
+                class="border p-2 rounded w-full"
+              ></textarea>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold mb-2">Panel Details</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <input
+                name="bgColor"
+                type="text"
+                placeholder="Background Color"
+                class="border p-2 rounded w-full"
+              />
+              <input
+                name="panelColor"
+                type="text"
+                placeholder="Panel Color"
+                class="border p-2 rounded w-full"
+              />
+              <input
+                name="textColor"
+                type="text"
+                placeholder="Text Color"
+                class="border p-2 rounded w-full"
+              />
+            </div>
+          </div>
+          <div class="w-full flex justify-end">
             <input
-              class="px-5 py-2 rounded mt-3 bg-blue-500 text-white"
+              class="px-5 py-2 cursor-pointer rounded mt-3 bg-blue-500 hover:bg-blue-600 text-white"
               type="submit"
               value="Create New Product"
             />
-          </form>
-        </main>
+          </div>
+        </form>
+      </main>
+      <p class="text-2xl mt-4">COLORS</p>
+      <div class="w-3/4 bg-white shadow p-8 flex items-center gap-5">
+        <div class="flex gap-2 items-center">
+          <div
+            class="w-20 h-10 rounded"
+            style="background-color: #ff5733"
+          ></div>
+          <span>#FF5733</span>
+        </div>
+        <div class="flex gap-2 items-center">
+          <div
+            class="w-20 h-10 rounded"
+            style="background-color: #333aff"
+          ></div>
+          <span>#333AFF</span>
+        </div>
       </div>
     </div>
   </body>

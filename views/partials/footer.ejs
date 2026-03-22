@@ -1,3 +1,35 @@
-</body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <footer class="bg-zinc-900 text-gray-300 py-6 mt-10">
+      <div
+        class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center"
+      >
+        <!-- Left -->
+        <p class="text-sm">
+          © <%= new Date().getFullYear() %> Shoppie. All rights reserved.
+        </p>
 
+        <!-- Center Links -->
+        <div class="flex gap-6 my-4 md:my-0">
+          <a href="/shop" class="hover:text-white transition">Home</a>
+          <a href="/about" class="hover:text-white transition">About</a>
+          <a href="/contact" class="hover:text-white transition">Contact</a>
+        </div>
+
+        <!-- Right -->
+        <div class="flex gap-4">
+          <a href="#" class="hover:text-white transition">Instagram</a>
+          <a href="#" class="hover:text-white transition">Twitter</a>
+          <a href="#" class="hover:text-white transition">LinkedIn</a>
+        </div>
+      </div>
+    </footer>
+  </body>
 </html>

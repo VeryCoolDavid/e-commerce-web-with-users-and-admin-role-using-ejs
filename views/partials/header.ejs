@@ -12,17 +12,42 @@
   </head>
 
   <body class="font-['helvetica_now_display']">
-    <nav class="w-full flex justify-between fixed top-0 px-5 py-3">
-      <h3 class="text-xl">Shoppie</h3>
-      <% let loggedIn = typeof logged !== "undefined" ? logged:true %> <%
-      if(loggedIn){ %>
-      <div class="flex gap-5">
-        <a href="/shop">Shop</a>
-        <a href="/cart">Cart</a>
-        <a href="/profile">My Account</a>
-        <a class="text-red-600" href="/users/logout">logout</a>
+    <header
+      class="w-full bg-zinc-900 text-white px-8 py-4 flex items-center justify-between"
+    >
+      <!-- LEFT: Brand -->
+      <div class="text-xl font-semibold">
+        <a class="text-lg" href="/shop">Shoppie</a>
       </div>
-      <% } %>
-    </nav>
+
+      <!-- CENTER: Navigation -->
+      <nav class="flex gap-6 text-sm">
+        <% if (user && user.role === "admin") { %>
+        <a href="/shop" class="hover:text-gray-300">Home</a>
+        <a href="/admin" class="hover:text-gray-300">Dashboard</a>
+        <a href="/users/profile">Profile</a>
+
+        <% } else if (user) { %>
+        <a href="/shop" class="hover:text-gray-300">Home</a>
+        <a href="/cart" class="hover:text-gray-300">Cart</a>
+        <a href="/users/profile">Profile</a>
+        <% } %>
+      </nav>
+
+      <!-- RIGHT: User actions -->
+      <div class="flex items-center gap-4 text-sm">
+        <% if (user) { %>
+        <span class="text-gray-300"> Hi, <%= user.fullname %> </span>
+        <form action="/users/logout" method="POST">
+          <button
+            type="submit"
+            class="bg-white text-black px-3 py-1 rounded hover:bg-gray-200 transition"
+          >
+            Logout
+          </button>
+        </form>
+        <% } %>
+      </div>
+    </header>
   </body>
 </html>
