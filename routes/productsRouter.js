@@ -55,7 +55,13 @@ router.post("/delete", async function (req, res) {
     fs.readdir(uploadPath, (err, files) => {
       if (!err) {
         for (const file of files) {
-          fs.unlink(path.join(uploadPath, file), () => {});
+          fs.unlink(path.join(uploadPath, file), (err) => {
+            if (err) {
+              console.log("Images delete error:", err);
+            } else {
+              console.log("Images deleted successfully");
+            }
+          });
         }
       }
     });

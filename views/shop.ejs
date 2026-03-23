@@ -61,12 +61,13 @@
                 <h3><%= product.name %></h3>
                 <h4>₹<%= product.price %></h4>
               </div>
-              <a
+              <form
                 class="w-7 h-7 flex items-center justify-center rounded-full bg-white"
-                href="/addtocart/<%= product._id %>"
-              >
-                <i class="ri-add-line"></i>
-              </a>
+                action="/addtocart/<%= product._id %>" method="post"
+              ><button><i class="ri-add-line"></i></button>
+              </form>
+                
+            
             </div>
           </div>
           <% }) %>

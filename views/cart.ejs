@@ -7,50 +7,91 @@
     <title>Document</title>
   </head>
   <body>
-    <%- include('./partials/header') %> <% if(user.cart &&
-    user.cart.length>0){%> <% user.cart.forEach(function(product){%>
-    <div class="w-full h-screen flex items-start px-20 py-20 gap-10">
-      <div class="w-[30%] rounded-md overflow-hidden">
-        <div class="w-full h-80 bg-[<%= product.bgColor %>]">
-          <img
-            src="data:image/jpeg;base64, <%= product.image.toString('base64') %>"
-            alt="product image"
-          />
+    <%- include('./partials/header') %> <% if(error.length>0){ %>
+    <div
+      class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-red-500"
+    >
+      <span class="inline-block mt-1 mb-1 text-white"> <%= error[0] %></span>
+    </div>
+    <% } %> 
+    <div
+    class="w-full min-h-screen flex items-center flex-col px-20 py-20 gap-10"
+  >
+    <% if(user.cart && user.cart.length>0){%>
+      <% user.cart.forEach(function(item){%> <% if (!item.product) return; %> <%
+      const product = item.product; %> <% const finalPrice = product.price * (1-
+      product.discount/100); const total = finalPrice * item.quantity; %>
+      <div class="rounded-md w-3/4 flex p-2">
+        <div
+          class="w-[30%] h-80 flex items-center justify-center bg-[<%= product.bgColor %>]"
+        >
+          <img src="/uploads/<%= product.image %>" alt="product image" />
         </div>
         <div
-          class="w-full flex bg-[<%= product.panelColor %>] justify-between px-5 py-4"
+          class="w-[70%] flex flex-col bg-[<%= product.panelColor %>] text-[<%= product.textColor %>] justify-between gap-3 px-5 py-4"
         >
-          <h3 class="text-2xl"><%= product.name %></h3>
-          <div class="flex items-center gap-2">
-            <i
-              class="w-7 h-7 bg-white flex rounded-full items-center justify-center ri-add-line"
-            ></i>
-            <div class="px-2 py-1 rounded-md bg-white text-black">01</div>
-            <i
-              class="w-7 h-7 bg-white flex rounded-full items-center justify-center ri-subtract-line"
-            ></i>
+          <div class="top">
+            <h2 class="text-2xl"><%= product.name %></h2>
+            <div class="mt-4">
+              <h3>Category: <%=product.category %></h3>
+              <h3>Description: <%= product.description %></h3>
+              <div class="flex justify-between">
+                <h4 class="w-1/3">Price:</h4>
+                <h4>₹<%= product.price%></h4>
+              </div>
+              <div class="flex justify-between">
+                <h4 class="w-1/3">Discount:</h4>
+                <h4><%= product.discount %>%</h4>
+              </div>
+            </div>
+          </div>
+          <div class="bottom">
+            <div class="flex mb-4 items-center text-white justify-between">
+              <h4 class="text-lg">Net Total:</h4>
+              <h2 class="text-lg"><b>₹<%= total %></b></h2>
+            </div>
+            <div
+              class="w-fit p-2 flex items-center border border-zinc-800 gap-6"
+            >
+              <% if(item.quantity > 1){ %>
+              <form action="/cart/update/<%= product._id %>" method="POST">
+                <input type="hidden" name="action" value="decrease" />
+                <button class="w-7 h-7 bg-white rounded-full">-</button>
+              </form>
+
+              <% } else { %>
+              <form action="/cart/update/<%= product._id %>" method="POST">
+                <input type="hidden" name="action" value="delete" />
+                <button
+                  class="w-7 h-7 bg-white text-[<%= product.textColor %>] rounded-full"
+                >
+                  <i class="ri-delete-bin-fill"></i>
+                </button>
+              </form>
+
+              <% } %>
+              <div class="px-2 py-1 bg-white text-black">
+                <%= item.quantity %>
+              </div>
+              <form action="/cart/update/<%= product._id %>" method="POST">
+                <input type="hidden" name="action" value="increase" />
+                <button class="w-7 h-7 bg-white rounded-full">+</button>
+              </form>
+            </div>
           </div>
         </div>
-        <div
-          class="flex items-center text-white justify-between bg-[<%= product.textColor %>] px-5 py-3"
-        >
-          <h4 class="text-lg">Net Total</h4>
-          <h2 class="text-lg">₹ 1200</h2>
-        </div>
       </div>
-      <div class="w-[70%]">
+      <%}) %>
+      <div class="w-full h-[1px] bg-black mt-10"></div>
+      <div class="shadow w-full p-6">
         <h3 class="text-xl">Price Breakdown</h3>
         <div class="px-10 mt-5">
           <div class="flex mt-2">
             <h4 class="w-1/3">Total MRP</h4>
-            <h4>₹ <%= bill %></h4>
+            <h4>₹<%= finalTotal %></finalTotal></h4>
           </div>
           <div class="flex mt-2">
-            <h4 class="w-1/3">Discount on MRP</h4>
-            <h4>₹ <%= product.discount %></h4>
-          </div>
-          <div class="flex mt-2">
-            <h4 class="w-1/3">Platform Fee</h4>
+            <h4 class="w-1/3">Estimated Platform Fee</h4>
             <h4>₹ 20</h4>
           </div>
           <div class="flex mt-2">
@@ -61,11 +102,11 @@
         <div class="w-full h-[1px] bg-black mt-10"></div>
         <div class="flex mt-5">
           <h3 class="w-1/3 text-xl">Total Amount</h3>
-          <h3 class="font-semibold text-xl text-green-600">₹ <%= bill %></h3>
+          <h3 class="font-semibold text-xl text-green-600">₹<%=20+finalTotal%></h3>
         </div>
         <form action=""></form>
       </div>
-    </div>
-    <%}) %> <%} %> <%- include('./partials/footer') %>
+      <%} else{%> <h1>No products in the cart!</h1> <%}%> 
+  </div> <%- include('./partials/footer') %>
   </body>
 </html>

@@ -12,23 +12,91 @@ router.get("/", function (req, res) {
 router.get("/shop", logged, async function (req, res) {
   let success = req.flash("success");
   let Products = await productModel.find();
-  res.render("shop", { Products, success , user:req.user});
+  res.render("shop", { Products, success, user: req.user });
 });
 
-router.get("/cart", async function (req, res) {
+router.get("/cart", logged, async function (req, res) {
   let user = await userModel
     .findOne({ email: req.user.email })
-    .populate("cart");
-  let bill = Number(user.cart[0].price) - Number(user.cart[0].discount);
-  res.render("cart", { user, bill });
+    .populate("cart.product");
+  let finalTotal = 0;
+  user.cart.forEach((item) => {
+    if (item.product) {
+      let price = item.product.price;
+      let discount = item.product.discount;
+
+      let itemFinal = price * (1 - discount / 100) * item.quantity;
+
+      finalTotal += itemFinal;
+    }
+  });
+
+  let error = req.flash("error");
+  res.render("cart", { user, error, finalTotal });
 });
 
-router.get("/addtocart/:productID", async function (req, res) {
+router.post("/addtocart/:id", logged, async function (req, res) {
   let user = await userModel.findOne({ email: req.user.email });
-  user.cart.push(req.params.productID);
+  let existingItem = user.cart.find(
+    (item) =>
+      (item.product._id?.toString() || item.product.toString()) ===
+      req.params.id
+  );
+  console.log(existingItem)
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    user.cart.push({ product: req.params.id, quantity: 1 });
+  }
   await user.save();
   req.flash("success", "Added to cart");
   res.redirect("/shop");
+});
+
+router.post("/cart/update/:id", logged, async (req, res) => {
+  const { action } = req.body;
+
+  let user = await userModel.findOne({ email: req.user.email });
+  let product = await productModel.findById(req.params.id);
+
+  if (!product) {
+    req.flash("error", "Product not found");
+    return res.redirect("/cart");
+  }
+
+  let item = user.cart.find(
+    (item) => item.product.toString() === req.params.id
+  );
+
+  if (!item) {
+    req.flash("error", "Item not in cart");
+    return res.redirect("/cart");
+  }
+
+  if (action === "increase") {
+    if (item.quantity >= product.stock) {
+      req.flash("error", "Out of stock");
+      return res.redirect("/cart");
+    }
+    item.quantity += 1;
+  }
+
+  if (action === "decrease") {
+    item.quantity -= 1;
+
+    if (item.quantity <= 0) {
+      user.cart = user.cart.filter(
+        (i) => i.product.toString() !== req.params.id
+      );
+    }
+  }
+
+  if (action === "delete") {
+    user.cart = user.cart.filter((i) => i.product.toString() !== req.params.id);
+  }
+
+  await user.save();
+  res.redirect("/cart");
 });
 
 module.exports = router;
