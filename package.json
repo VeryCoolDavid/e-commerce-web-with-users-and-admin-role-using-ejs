@@ -23,7 +23,7 @@
     "dev": "npx run nodemon"
   },
   "keywords": [],
-  "author": "",
+  "author": "david",
   "license": "ISC",
   "type": "commonjs"
 }

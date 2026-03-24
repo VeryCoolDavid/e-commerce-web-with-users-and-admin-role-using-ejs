@@ -3,6 +3,8 @@ const { logged } = require("../middlewares/isLoggedin");
 const router = express.Router();
 const productModel = require("../models/product-model");
 const userModel = require("../models/user-model");
+const orderModel = require("../models/order-model");
+const { calculateCartTotal } = require("../utils/calculateTotal");
 
 router.get("/", function (req, res) {
   let error = req.flash("error");
@@ -18,18 +20,9 @@ router.get("/shop", logged, async function (req, res) {
 router.get("/cart", logged, async function (req, res) {
   let user = await userModel
     .findOne({ email: req.user.email })
-    .populate("cart.product");
-  let finalTotal = 0;
-  user.cart.forEach((item) => {
-    if (item.product) {
-      let price = item.product.price;
-      let discount = item.product.discount;
-
-      let itemFinal = price * (1 - discount / 100) * item.quantity;
-
-      finalTotal += itemFinal;
-    }
-  });
+    .populate("cart.product")
+    .populate("saved.product");
+  let finalTotal = calculateCartTotal(user.cart);
 
   let error = req.flash("error");
   res.render("cart", { user, error, finalTotal });
@@ -42,7 +35,7 @@ router.post("/addtocart/:id", logged, async function (req, res) {
       (item.product._id?.toString() || item.product.toString()) ===
       req.params.id
   );
-  console.log(existingItem)
+  console.log(existingItem);
   if (existingItem) {
     existingItem.quantity += 1;
   } else {
@@ -97,6 +90,38 @@ router.post("/cart/update/:id", logged, async (req, res) => {
 
   await user.save();
   res.redirect("/cart");
+});
+
+router.post("/checkout", logged, async (req, res) => {
+  let user = await userModel
+    .findOne({ email: req.user.email })
+    .populate("cart.product");
+
+  let finalTotal = calculateCartTotal(user.cart);
+  let orderItems = user.cart.map((item) => {
+    let price = item.product.price;
+    let discount = item.product.discount;
+
+    let finalPrice = price * (1 - discount / 100);
+
+    return {
+      product: item.product._id,
+      quantity: item.quantity,
+      price: finalPrice,
+    };
+  });
+  // create order...
+  let order = await orderModel.create({
+    user: user._id,
+    items: orderItems,
+    totalAmount: finalTotal,
+  });
+
+  user.cart = [];
+  await user.save();
+  
+  req.flash("success","Order Placed!")
+  res.redirect("/users/order");
 });
 
 module.exports = router;

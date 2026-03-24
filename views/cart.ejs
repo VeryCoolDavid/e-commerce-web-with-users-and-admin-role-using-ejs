@@ -15,12 +15,13 @@
     </div>
     <% } %> 
     <div
-    class="w-full min-h-screen flex items-center flex-col px-20 py-20 gap-10"
-  >
+    class="w-full  flex items-center flex-col px-20 pt-20 gap-10"
+  ><h2 class="text-lg font-bold">Your Cart (<%= user.cart.length %>)</h2>
     <% if(user.cart && user.cart.length>0){%>
       <% user.cart.forEach(function(item){%> <% if (!item.product) return; %> <%
       const product = item.product; %> <% const finalPrice = product.price * (1-
       product.discount/100); const total = finalPrice * item.quantity; %>
+      
       <div class="rounded-md w-3/4 flex p-2">
         <div
           class="w-[30%] h-80 flex items-center justify-center bg-[<%= product.bgColor %>]"
@@ -45,7 +46,7 @@
               </div>
             </div>
           </div>
-          <div class="bottom">
+          <div class="relative bottom">
             <div class="flex mb-4 items-center text-white justify-between">
               <h4 class="text-lg">Net Total:</h4>
               <h2 class="text-lg"><b>₹<%= total %></b></h2>
@@ -78,6 +79,7 @@
                 <button class="w-7 h-7 bg-white rounded-full">+</button>
               </form>
             </div>
+            <a class ="absolute left-40 top-12 px-4 py-2 rounded-md bg-white hover:text-black "href="users/save-for-later/<%= item.product._id %>">Save for later</a>
           </div>
         </div>
       </div>
@@ -100,13 +102,65 @@
           </div>
         </div>
         <div class="w-full h-[1px] bg-black mt-10"></div>
-        <div class="flex mt-5">
-          <h3 class="w-1/3 text-xl">Total Amount</h3>
+        
+          <div class="flex mt-5">
+          <h3 class="w-1/3 text-xl">Total Amount:</h3>
           <h3 class="font-semibold text-xl text-green-600">₹<%=20+finalTotal%></h3>
         </div>
-        <form action=""></form>
+        <div class="w-1/2">
+        <form class="text-right"action="/checkout" method="post"type="submit">
+          <button class=" hover:bg-blue-700 text-white bg-blue-600 px-4 py-2 rounded-md">Buy now</button>
+        </form></div>
+        
       </div>
-      <%} else{%> <h1>No products in the cart!</h1> <%}%> 
-  </div> <%- include('./partials/footer') %>
+      <%} else{%> <h1 class="w-3/4 bg-white p-6 text-center shadow">No products in the cart!</h1> <%}%> 
+  </div> 
+ 
+    <% if(user.saved && user.saved.length > 0){ %>
+      <div class="w-full min-h-screen flex items-center flex-col px-20 pb-20 gap-10">
+      <h2 class="text-2xl mt-10 mb-4">Saved for later (<%= user.saved.length %>)</h2>
+      <% user.saved.forEach(item => { %>
+        <% const product = item.product; %> <% const total = product.price * (1-
+        product.discount/100); %>
+    
+        <div class="rounded-md w-3/4 flex p-2">
+          <div
+            class="w-[30%] h-80 flex items-center justify-center bg-[<%= product.bgColor %>]"
+          >
+            <img src="/uploads/<%= product.image %>" alt="product image" />
+          </div>
+          <div
+            class="w-[70%] flex flex-col bg-[<%= product.panelColor %>] text-[<%= product.textColor %>] justify-between gap-3 px-5 py-4"
+          >
+            <div class="top">
+              <h2 class="text-2xl"><%= product.name %></h2>
+              <div class="mt-4">
+                <h3>Category: <%=product.category %></h3>
+                <h3>Description: <%= product.description %></h3>
+                <div class="flex justify-between">
+                  <h4 class="w-1/3">Price:</h4>
+                  <h4>₹<%= product.price%></h4>
+                </div>
+                <div class="flex justify-between">
+                  <h4 class="w-1/3">Discount:</h4>
+                  <h4><%= product.discount %>%</h4>
+                </div>
+              </div>
+            </div>
+            <div class="bottom mb-4 ">
+              <div class="flex mb-4 items-center text-white justify-between">
+                <h4 class="text-lg">Net Total:</h4>
+                <h2 class="text-lg"><b>₹<%= total %></b></h2>
+              </div>
+              
+              <a class =" px-4 py-2 rounded-md bg-white hover:text-black "href="users/move-to-cart/<%= item.product._id %>">Move to cart</a>
+            </div>
+          </div>
+        </div>
+    
+      <% }) %>
+    </div>
+    <% } %>
+  <%- include('./partials/footer') %>
   </body>
 </html>

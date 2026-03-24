@@ -13,13 +13,13 @@ const orderSchema = mongoose.Schema(
           ref: "product",
         },
         quantity: Number,
-        price: Number, // snapshot (IMPORTANT)
+        price: Number, //(IMPORTANT)
       },
     ],
     totalAmount: Number,
     status: {
       type: String,
-      enum: ["Pending", "Paid", "Shipped", "Delivered"],
+      enum: ["Pending", "Shipped", "Delivered"],
       default: "Pending",
     },
   },

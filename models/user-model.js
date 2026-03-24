@@ -55,7 +55,14 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
-
+    saved: [
+      {
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "product",
+        },
+      },
+    ],
     orders: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -69,7 +76,7 @@ const userSchema = new mongoose.Schema(
     },
 
     profilePic: {
-      type: String, 
+      type: String,
       default: "",
     },
   },

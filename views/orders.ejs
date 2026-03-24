@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>My Orders</title>
+  </head>
+
+  <body class="bg-gray-100">
+    <%- include('./partials/header') %>
+    <% if(success.length>0){ %>
+        <div
+          class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-blue-500"
+        >
+          <span class="inline-block mt-1 mb-1 text-white"> <%= success %> </span>
+        </div>
+    <% } %>
+
+    <div class="max-w-5xl min-h-screen mx-auto mt-10">
+      <h1 class="text-3xl font-semibold mb-6">Your Orders</h1>
+      <% if (orders.length > 0) { %> <% orders.forEach(order => { %>
+      <!-- Order Card -->
+      <div class="bg-white p-5 rounded-lg shadow mb-6">
+        <!-- Top Info -->
+        <div class="flex justify-between border-b pb-3 mb-4">
+          <div>
+            <p class="text-sm text-gray-500">ORDER PLACED</p>
+            <p><%= order.createdAt.toDateString() %></p>
+          </div>
+
+          <div>
+            <p class="text-sm text-gray-500">TOTAL</p>
+            <p>₹ <%= order.totalAmount %></p>
+          </div>
+
+          <div>
+            <p class="text-sm text-gray-500">STATUS</p>
+            <p class="text-green-600 font-medium"><%= order.status %></p>
+          </div>
+
+          <div>
+            <p class="text-sm text-gray-500">ORDER ID</p>
+            <p class="text-xs"><%= order._id %></p>
+          </div>
+        </div>
+
+        <!-- Products -->
+        <div>
+          <% order.items.forEach(item => { %>
+
+          <div class="flex gap-4 mb-4 items-center">
+            <!-- Image -->
+            <img
+              src="/uploads/<%= item.product.image %>"
+              class="w-30 h-40 object-cover rounded"
+            />
+
+            <!-- Info -->
+            <div class="flex-1">
+              <h3 class="text-lg font-medium"><%= item.product.name %></h3>
+
+              <p class="text-gray-600 text-sm">
+                Quantity: <%= item.quantity %>
+              </p>
+
+              <p class="text-gray-600 text-sm">Price: ₹ <%= item.price %></p>
+            </div>
+
+            <!-- Button -->
+            <a
+              href="/users/orders/<%= order._id %>"
+              class="text-blue-500 text-sm"
+            >
+              View Details
+            </a>
+          </div>
+
+          <% }) %>
+        </div>
+      </div>
+
+      <% }) %> <% } else { %>
+
+      <div class="bg-white p-6 rounded shadow text-center">
+        <p class="text-gray-600">You have no orders yet</p>
+      </div>
+
+      <% } %>
+    </div>
+
+    <%- include('./partials/footer') %>
+  </body>
+</html>
