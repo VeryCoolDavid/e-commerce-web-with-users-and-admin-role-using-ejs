@@ -30,7 +30,7 @@
       >
         <div class="w-full flex justify-center text-purple-100 gap-2">
           <a class="rounded-md p-2 bg-black" href="/shop">Home</a>
-          <a class="rounded-md p-2 bg-black" href="/admin">Dashboard</a>
+          <a class="rounded-md p-2 bg-black" href="/admin/orders">Orders</a>
           <a class="rounded-md p-2 bg-black" href="/products/create"
             >Add product</a
           >
@@ -47,9 +47,9 @@
             <button class="hover:text-red-800">Delete all</button>
           </form>
         </div>
-        <div class="flex items-start gap-5">
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-6">
           <% Products.forEach(function(product){ %>
-          <div class="w-60">
+          <div>
             <div
               class="w-full h-52 flex items-center justify-center bg-[<%= product.bgColor %>]"
             >

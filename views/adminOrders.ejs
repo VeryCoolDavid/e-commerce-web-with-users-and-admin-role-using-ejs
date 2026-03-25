@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <% if(success.length>0){ %>
+      <div
+        class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-blue-500"
+      >
+        <span class="inline-block mt-1 mb-1 text-white"> <%= success %> </span>
+      </div>
+      <% } %>
+    <div
+      class="w-full min-h-screen flex items-stretch bg-zinc-100 items-start gap-5 px-10 py-10"
+    >
+      <div
+        class="w-[25%] flex bg-white p-4 shadow rounded-md flex-col items-start"
+      >
+        <div class="w-full flex justify-center text-purple-100 gap-2">
+          <a class="rounded-md p-2 bg-black" href="/shop">Home</a>
+          <a class="rounded-md p-2 bg-black" href="/admin">Dashboard</a>
+          <a class="rounded-md p-2 bg-black" href="/products/create"
+            >Add product</a
+          >
+        </div>
+      </div>
+
+      <% if (orders.length>0) {%>
+      <div class="w-[75%] bg-white flex shadow p-4 flex-col gap-5">
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(500px,1fr))] gap-6">
+          <% orders.forEach(order => { %>
+          <div class="bg-white p-5 rounded-lg shadow mb-6">
+            <!-- Top Info -->
+            <div class="flex justify-between border-b pb-3 mb-4">
+              <div>
+                <p class="text-sm text-gray-500">ORDER PLACED</p>
+                <p><%= order.createdAt.toDateString() %></p>
+              </div>
+
+              <div>
+                <p class="text-sm text-gray-500">STATUS</p>
+                <% if(order.status ==="Cancelled"){%>
+                <p class="text-red-600 font-medium">
+                  <i class="ri-close-line"></i><%= order.status %>
+                </p>
+                <%} else if (order.status==="Delivered"){%>
+                <p class="text-green-600 font-medium"><%= order.status %></p>
+                <%} else{%>
+                  <p class="text-yellow-600 font-medium"><%= order.status %></p>
+                  <%} %>
+              </div>
+
+              <div>
+                <p class="text-sm text-gray-500">USER</p>
+                <p><%= order.user.email %></p>
+              </div>
+
+              <div>
+                <p class="text-sm text-gray-500">ORDER ID</p>
+                <p class="text-xs"><%= order._id %></p>
+              </div>
+            </div>
+
+            <!-- Products -->
+            <div>
+              <% order.items.forEach(item => { %>
+
+              <div class="flex gap-4 mb-4 items-center">
+                <!-- Image -->
+                <img
+                  src="/uploads/<%= item.product.image %>"
+                  class="w-30 h-40 object-cover rounded"
+                />
+
+                <!-- Info -->
+                <div class="flex-1">
+                  <h3 class="text-lg font-medium"><%= item.product.name %></h3>
+
+                  <p class="text-gray-600 text-sm">
+                    Quantity: <%= item.quantity %>
+                  </p>
+                  <p class="text-gray-600 text-sm">
+                    Price: ₹ <%= item.price %>
+                  </p>
+
+                  <p class="text-gray-600 text-sm">
+                    Estimated Delivery: <%= new Date(new
+                    Date(order.createdAt).setDate(new
+                    Date(order.createdAt).getDate() + 7)).toDateString() %>
+                  </p>
+
+                  <p class="text-sm text-gray-600">
+                    <b class="text-green-600">Total: ₹<%= order.totalAmount %></b>
+                  </p>
+                </div>
+
+                <form action="/admin/orders/<%= order._id %>/status" method="POST" class="mt-4 flex gap-2">
+      
+                  <select name="status" class="border px-2 py-1">
+            
+                    <option value="Pending" <%= order.status === "Pending" ? "selected" : "" %>>Pending</option>
+                    <option value="Shipped" <%= order.status === "Shipped" ? "selected" : "" %>>Shipped</option>
+                    <option value="Delivered" <%= order.status === "Delivered" ? "selected" : "" %>>Delivered</option>
+                    <option value="Cancelled" <%= order.status === "Cancelled" ? "selected" : "" %>>Cancelled</option>
+            
+                  </select>
+            
+                  <button class="bg-blue-500 text-white px-3 py-1 rounded">
+                    Update
+                  </button>
+            
+                </form>
+              </div>
+
+              <% }) %>
+            </div>
+          </div>
+
+          <%})%>
+        </div>
+      </div>
+      <%} else {%>
+        <div class="bg-white p-6 rounded shadow text-center">
+          <p class="text-gray-600">You have no orders yet</p>
+        </div>
+        <%} %>
+    </div>
+    
+  </body>
+</html>

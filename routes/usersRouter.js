@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userModel = require("../models/user-model");
 const orderModel = require("../models/order-model");
+const productModel = require("../models/product-model");
 const { logged } = require("../middlewares/isLoggedin");
 
 const {
@@ -66,8 +67,43 @@ router.get("/order", logged, async (req, res) => {
     .populate("items.product")
     .sort({ createdAt: -1 });
 
-  let success=req.flash("success")
-  res.render("orders", { success, orders, user:req.user });
+  let success = req.flash("success");
+  let error = req.flash("error");
+  res.render("orders", { success, error, orders, user: req.user });
+});
+
+router.get("/order/:id", logged, async (req, res) => {
+  let order = await orderModel
+    .findById(req.params.id)
+    .populate("items.product");
+
+  res.render("orderDetails", { order, user: req.user });
+});
+
+router.post("/order/:id/cancel", logged, async (req, res) => {
+  let order = await orderModel.findById(req.params.id);
+
+  // ❗ Security check (VERY IMPORTANT)
+  if (order.user.toString() !== req.user._id.toString()) {
+    return res.send("Unauthorized");
+  }
+
+  // ❗ Allow cancel only if Pending
+  if (order.status !== "Pending") {
+    req.flash("error", "Order cannot be cancelled");
+    return res.redirect("/users/order");
+  }
+  for (let item of order.items) {
+    await productModel.findByIdAndUpdate(item.product, {
+      $inc: { stock: item.quantity }, // 🔥 increase back
+    });
+  }
+
+  // ✅ Update status
+  order.status = "Cancelled";
+  await order.save();
+
+  res.redirect(`/users/order/${order._id}`);
 });
 
 router.post("/register", registerUser);

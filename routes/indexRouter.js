@@ -17,6 +17,32 @@ router.get("/shop", logged, async function (req, res) {
   res.render("shop", { Products, success, user: req.user });
 });
 
+router.get("/shop/collection", logged, async (req, res) => {
+  let query = {};
+  let sort = {};
+  if (req.query.discount === "true") {
+    query.discount = { $gt: 0 };
+  }
+  if (req.query.sort === "discount") {
+    sort.discount = -1;
+  }
+  if (req.query.availability === "true") {
+    query.stock = { $gt: 0 };
+  }
+  if (req.query.new === "true") {
+    let daysAgo = new Date();
+    daysAgo.setDate(daysAgo.getDate() - 7);
+
+    query.createdAt = { $gte: daysAgo };
+  }
+  if (!req.query.sort) {
+    sort.createdAt = -1;
+  }
+
+  let Products = await productModel.find(query).sort(sort);
+  res.render("collection", { Products, user: req.user });
+});
+
 router.get("/cart", logged, async function (req, res) {
   let user = await userModel
     .findOne({ email: req.user.email })
@@ -117,10 +143,16 @@ router.post("/checkout", logged, async (req, res) => {
     totalAmount: finalTotal,
   });
 
+  for (let item of user.cart) {
+    await productModel.findByIdAndUpdate(item.product, {
+      $inc: { stock: -item.quantity }, // 🔥 decrease
+    });
+  }
+
   user.cart = [];
   await user.save();
-  
-  req.flash("success","Order Placed!")
+
+  req.flash("success", "Order Placed!");
   res.redirect("/users/order");
 });
 

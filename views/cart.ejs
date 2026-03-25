@@ -15,7 +15,7 @@
     </div>
     <% } %> 
     <div
-    class="w-full  flex items-center flex-col px-20 pt-20 gap-10"
+    class="w-full min-h-screen flex items-center flex-col px-20 pt-20 gap-10"
   ><h2 class="text-lg font-bold">Your Cart (<%= user.cart.length %>)</h2>
     <% if(user.cart && user.cart.length>0){%>
       <% user.cart.forEach(function(item){%> <% if (!item.product) return; %> <%

@@ -11,14 +11,7 @@
     <title>Document</title>
   </head>
   <body>
-    <%- include('./partials/header') %> <% if(success.length>0){ %>
-    <div
-      class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-blue-500"
-    >
-      <span class="inline-block mt-1 mb-1 text-white"> <%= success %> </span>
-    </div>
-    <% } %>
-
+    <%- include('./partials/header') %>
     <div
       class="w-full min-h-screen flex bg-zinc-100 items-start gap-4 px-20 py-10"
     >
@@ -70,7 +63,25 @@
       <div class="w-[75%] h-screen flex flex-col gap-5">
         <div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-6">
           <% Products.forEach(function(product){ %>
-          <div>
+          <div class="relative">
+            <% let isNew = (new Date() - new Date(product.createdAt)) < (7 * 24
+            * 60 * 60 * 1000); %> <% if (product.discount > 0) { %>
+            <!-- 🔴 Show Discount ONLY -->
+            <span
+              class="absolute top-0 text-xs bg-red-500 text-white px-2 py-1 rounded"
+            >
+              <%= product.discount %>% OFF
+            </span>
+
+            <% } else if (isNew) { %>
+            <!-- 🟢 Show NEW only if NO discount -->
+            <span
+              class="absolute top-0 text-xs bg-green-500 text-white px-2 py-1 rounded"
+            >
+              NEW
+            </span>
+
+            <% } %>
             <div
               class="w-full h-52 flex items-center justify-center bg-[<%= product.bgColor %>]"
             >
