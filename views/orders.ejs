@@ -56,12 +56,12 @@
 
           <div>
             <p class="text-sm text-gray-500">TOTAL</p>
-            <p>₹ <%= order.totalAmount %></p>
+            <p>₹ <%= order.totalAmount+20 %></p>
           </div>
         </div>
 
         <!-- Products -->
-        <div class="flex items-end">
+        <div class="flex">
           <div class="flex-1">
             <% order.items.forEach(item => { %>
             <div class="flex gap-4 mb-4 items-center">
@@ -74,23 +74,19 @@
               <!-- Info -->
               <div class="flex-1">
                 <h3 class="text-lg font-medium"><%= item.product.name %></h3>
-
                 <p class="text-gray-600 text-sm">
                   Quantity: <%= item.quantity %>
                 </p>
-                <p class="text-gray-600 text-sm">Price: ₹ <%= item.price %></p>
+                <p class="text-gray-600 text-sm">
+                  Price: ₹ <%= (item.price).toFixed(2) %>
+                </p>
+                <p class="text-sm text-gray-500">Shipping: ₹20</p>
               </div>
               <!-- Button -->
             </div>
             <% }) %>
           </div>
-          <div class="flex flex-col gap-4">
-            <a
-              href="/users/order/<%= order._id %>"
-              class="text-blue-500 text-sm"
-            >
-              View Details
-            </a>
+          <div class="flex flex-col gap-2 mt-4">
             <% if (order.status === "Pending") { %>
             <form
               class="bg-red-500 px-4 py-2 hover:bg-red-600 rounded-md"
@@ -103,6 +99,12 @@
               </button>
             </form>
             <% } %>
+            <a
+              href="/users/order/<%= order._id %>"
+              class="text-blue-500 text-center text-sm"
+            >
+              View Details
+            </a>
           </div>
         </div>
       </div>

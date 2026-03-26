@@ -77,7 +77,8 @@ router.get("/order/:id", logged, async (req, res) => {
     .findById(req.params.id)
     .populate("items.product");
 
-  res.render("orderDetails", { order, user: req.user });
+  let success = req.flash("success");
+  res.render("orderDetails", { order, user: req.user, success });
 });
 
 router.post("/order/:id/cancel", logged, async (req, res) => {
@@ -103,6 +104,7 @@ router.post("/order/:id/cancel", logged, async (req, res) => {
   order.status = "Cancelled";
   await order.save();
 
+  req.flash("success", "Product cancelled successfully");
   res.redirect(`/users/order/${order._id}`);
 });
 

@@ -5,7 +5,7 @@ module.exports.calculateCartTotal = (cart) => {
     let price = item.product.price;
     let discount = item.product.discount;
 
-    let finalPrice = price * (1 - discount / 100);
+    let finalPrice = (price * (1 - discount / 100)).toFixed(2);
     total += finalPrice * item.quantity;
   });
 

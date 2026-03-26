@@ -5,6 +5,8 @@ const productModel = require("../models/product-model");
 const userModel = require("../models/user-model");
 const orderModel = require("../models/order-model");
 const { calculateCartTotal } = require("../utils/calculateTotal");
+const razorpay = require("../config/razorpay");
+const crypto = require("crypto");
 
 router.get("/", function (req, res) {
   let error = req.flash("error");
@@ -48,8 +50,8 @@ router.get("/cart", logged, async function (req, res) {
     .findOne({ email: req.user.email })
     .populate("cart.product")
     .populate("saved.product");
-  let finalTotal = calculateCartTotal(user.cart);
 
+  let finalTotal = calculateCartTotal(user.cart);
   let error = req.flash("error");
   res.render("cart", { user, error, finalTotal });
 });
@@ -61,7 +63,6 @@ router.post("/addtocart/:id", logged, async function (req, res) {
       (item.product._id?.toString() || item.product.toString()) ===
       req.params.id
   );
-  console.log(existingItem);
   if (existingItem) {
     existingItem.quantity += 1;
   } else {
@@ -118,42 +119,82 @@ router.post("/cart/update/:id", logged, async (req, res) => {
   res.redirect("/cart");
 });
 
-router.post("/checkout", logged, async (req, res) => {
-  let user = await userModel
-    .findOne({ email: req.user.email })
-    .populate("cart.product");
-
-  let finalTotal = calculateCartTotal(user.cart);
-  let orderItems = user.cart.map((item) => {
-    let price = item.product.price;
-    let discount = item.product.discount;
-
-    let finalPrice = price * (1 - discount / 100);
-
-    return {
-      product: item.product._id,
-      quantity: item.quantity,
-      price: finalPrice,
-    };
-  });
-  // create order...
-  let order = await orderModel.create({
-    user: user._id,
-    items: orderItems,
-    totalAmount: finalTotal,
-  });
-
-  for (let item of user.cart) {
-    await productModel.findByIdAndUpdate(item.product, {
-      $inc: { stock: -item.quantity }, // 🔥 decrease
-    });
+router.post("/checkout", logged, async function (req, res) {
+  let user = await userModel.findById(req.user._id).populate("cart.product");
+  const outOfStock = user.cart.find((item) => item.product.stock <= 0);
+  if (outOfStock) {
+    req.flash("error", `Product ${outOfStock.product.name} is out of stock`);
+    return res.redirect("/cart");
   }
 
-  user.cart = [];
-  await user.save();
+  let cartTotal = calculateCartTotal(user.cart);
+  let shipping = 20;
+  let finalTotal = shipping + cartTotal;
+  const options = {
+    amount: finalTotal * 100,
+    currency: "INR",
+    receipt: "order_" + Date.now(),
+  };
+  const razorOrder = await razorpay.orders.create(options);
+  res.render("paymentPage", {
+    key: process.env.RAZORPAY_API_KEY,
+    razorOrder,
+  });
+});
 
-  req.flash("success", "Order Placed!");
-  res.redirect("/users/order");
+router.post("/payment/verify", logged, async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      req.body;
+
+    // 1️⃣ Verify signature
+    const generated_signature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_SECRET_KEY)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .digest("hex");
+
+    if (generated_signature !== razorpay_signature) {
+      return res.status(400).send("Payment verification failed");
+    }
+
+    const user = await userModel
+      .findById(req.user._id)
+      .populate("cart.product");
+
+    let finalTotal = calculateCartTotal(user.cart);
+    let orderItems = user.cart.map((item) => {
+      let price = item.product.price;
+      let discount = item.product.discount;
+      let finalPrice = price * (1 - discount / 100);
+      return {
+        product: item.product._id,
+        quantity: item.quantity,
+        price: finalPrice,
+      };
+    });
+    // create order...
+    let order = await orderModel.create({
+      user: user._id,
+      items: orderItems,
+      totalAmount: finalTotal,
+    });
+
+    for (let item of user.cart) {
+      await productModel.findByIdAndUpdate(item.product._id, {
+        $inc: { stock: -item.quantity },
+      });
+    }
+
+    user.cart = [];
+    user.orders.push(order._id);
+    await user.save();
+
+    req.flash("success", "Order Placed!");
+    res.redirect(`/users/order/${order._id}`);
+  } catch (err) {
+    req.flash("error", "Payment verification failed");
+    return res.status(500).redirect("/cart");
+  }
 });
 
 module.exports = router;
