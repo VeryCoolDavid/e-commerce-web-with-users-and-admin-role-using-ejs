@@ -70,7 +70,12 @@
       <div class="w-[75%] h-screen flex flex-col gap-5">
         <div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-6">
           <% Products.forEach(function(product){ %>
-          <div>
+          <div class="relative">
+            <form action="/users/wishlist/add/<%= product._id %>" method="POST">
+              <button class="absolute top-0 right-1">
+                <i class="ri-heart-line hover:text-red-600"></i>
+              </button>
+            </form>
             <div
               class="w-full h-52 flex items-center justify-center bg-[<%= product.bgColor %>]"
             >

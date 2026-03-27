@@ -71,7 +71,7 @@
               <p class="text-gray-600 text-sm">
                 Price: ₹ <%= (item.price).toFixed(2) %>
               </p>
-              <p class="text-sm text-gray-500">Shipping: ₹20</p>
+              
             </div>
           </div>
 
@@ -80,7 +80,7 @@
 
         <!-- Total -->
         <div class="mt-6 flex justify-between text-xl font-semibold">
-          <span>Total Amount</span>
+          <span>Total Amount + (Shipping: ₹20)</span>
           <span class="text-green-600">₹ <%= order.totalAmount +20 %></span>
         </div>
       </div>

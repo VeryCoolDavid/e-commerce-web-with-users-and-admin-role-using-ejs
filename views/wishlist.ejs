@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Wishlist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-gray-100">
+    <%- include('./partials/header') %>
+
+    <div class="max-w-6xl min-h-screen mx-auto p-6">
+      <h1 class="text-3xl font-bold mb-6">Your Wishlist</h1>
+
+      <% if (wishlist.length === 0) { %>
+
+      <!-- Empty State -->
+      <div class="text-center mt-20">
+        <i class="ri-heart-line text-6xl text-gray-400"></i>
+        <p class="text-gray-500 mt-4">Your wishlist is empty</p>
+        <a
+          href="/shop"
+          class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Go Shopping
+        </a>
+      </div>
+
+      <% } else { %>
+
+      <!-- Wishlist Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <% wishlist.forEach(product => { %>
+
+        <div
+          class="bg-white p-4 text-[<%= product.textColor %>] rounded shadow hover:shadow-lg transition"
+        >
+          <!-- Product Image -->
+          <div class="bg-[<%= product.bgColor %>] p-4">
+            <img
+              src="/uploads/<%= product.image %>"
+              class="w-full h-48 object-contain rounded"
+            />
+          </div>
+          <div class="bg-[<%= product.panelColor %>] px-2">
+            <!-- Product Info -->
+            <h2 class="text-lg font-semibold"><%= product.name %></h2>
+            <p class="text-sm"><%= product.category %></p>
+            <!-- Price -->
+            <p class="text-xl text-green-600 font-bold mt-2">
+              ₹<%= product.price %>
+            </p>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex justify-between items-center mt-4">
+            <!-- Remove -->
+            <form
+              action="/users/wishlist/remove/<%= product._id %>"
+              method="POST"
+            >
+              <button class="text-red-500 text-xl">
+                <i class="ri-delete-bin-line"></i>
+              </button>
+            </form>
+
+            <!-- Add to Cart (optional) -->
+            <form action="/addtocart/<%= product._id %>" method="POST">
+              <button class="bg-blue-500 text-white px-3 py-1 rounded text-sm">
+                Add to Cart
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <% }) %>
+      </div>
+
+      <% } %>
+    </div>
+
+    <%- include('./partials/footer') %>
+  </body>
+</html>

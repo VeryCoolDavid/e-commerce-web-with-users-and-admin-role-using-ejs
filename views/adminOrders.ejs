@@ -27,6 +27,7 @@
             >Add product</a
           >
         </div>
+        <h3 class="text-lg font-semibold mt-6">Total Orders:<%= totalOrders %></h3>
       </div>
 
       <% if (orders.length>0) {%>
@@ -82,7 +83,7 @@
                     Quantity: <%= item.quantity %>
                   </p>
                   <p class="text-gray-600 text-sm">
-                    Price: ₹ <%= item.price %>
+                    Price: ₹ <%= (item.price).toFixed(2) %>
                   </p>
 
                   <p class="text-gray-600 text-sm">

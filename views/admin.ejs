@@ -8,6 +8,7 @@
       href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Document</title>
   </head>
   <body>
@@ -24,7 +25,9 @@
       <span class="inline-block mt-1 mb-1 text-white"> <%= success %> </span>
     </div>
     <% } %>
-    <div class="w-full min-h-screen flex bg-zinc-100 items-start gap-5 px-10 py-10">
+    <div
+      class="w-full min-h-screen flex bg-zinc-100 items-start gap-5 px-10 py-10"
+    >
       <div
         class="w-[25%] flex bg-white p-4 shadow rounded-md h-screen flex-col items-start"
       >
@@ -34,6 +37,13 @@
           <a class="rounded-md p-2 bg-black" href="/products/create"
             >Add product</a
           >
+        </div>
+        <h3 class="text-lg font-semibold mt-6">
+          Total products: <%= totalProducts %>
+        </h3>
+        <div class="max-w-3xl h-64 mx-auto mt-3 p-4 bg-white rounded shadow">
+          <h3 class="text-lg font-medium mb-3">Revenue</h3>
+          <canvas id="revenueChart" class="w-full"></canvas>
         </div>
       </div>
       <div class="w-[75%] bg-white flex shadow p-4 flex-col gap-5 h-screen">
@@ -79,5 +89,32 @@
         </div>
       </div>
     </div>
+
+    <script>
+      const ctx = document.getElementById("revenueChart").getContext("2d");
+      const revenueChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Weekly", "Monthly", "Yearly"],
+          datasets: [
+            {
+              label: "Revenue (₹)",
+              data: [
+                Number("<%= revenue.weeklyRevenue %>"),
+                Number("<%= revenue.monthlyRevenue %>"),
+                Number("<%= revenue.yearlyRevenue %>"),
+              ],
+              backgroundColor: ["#3B82F6", "#10B981", "#F59E0B"],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } },
+        },
+      });
+    </script>
   </body>
 </html>

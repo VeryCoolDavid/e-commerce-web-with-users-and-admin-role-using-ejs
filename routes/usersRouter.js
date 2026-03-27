@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const upload = require("../config/multer-config");
 const userModel = require("../models/user-model");
 const orderModel = require("../models/order-model");
 const productModel = require("../models/product-model");
@@ -11,8 +12,29 @@ const {
   logout,
 } = require("../controllers/authController");
 
-router.get("/", function (req, res) {
-  res.send("usersrouter");
+router.get("/", logged, function (req, res) {
+  res.render("profile", { user: req.user });
+});
+
+router.get("/wishlist", logged, async (req, res) => {
+  const user = await userModel.findById(req.user._id).populate("wishlist");
+  res.render("wishlist", { wishlist: user.wishlist, user: req.user });
+});
+
+router.post("/wishlist/add/:productId", logged, async (req, res) => {
+  const productId = req.params.productId;
+  await userModel.findByIdAndUpdate(req.user._id, {
+    $addToSet: { wishlist: productId }, // prevents duplicates
+  });
+  res.redirect("/shop");
+});
+
+router.post("/wishlist/remove/:productId", logged, async (req, res) => {
+  await userModel.findByIdAndUpdate(req.user._id, {
+    $pull: { wishlist: req.params.productId },
+  });
+
+  res.redirect("/users/wishlist");
 });
 
 router.get("/save-for-later/:id", logged, async (req, res) => {

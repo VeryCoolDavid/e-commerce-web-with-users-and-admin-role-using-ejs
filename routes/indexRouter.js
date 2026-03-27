@@ -15,8 +15,8 @@ router.get("/", function (req, res) {
 
 router.get("/shop", logged, async function (req, res) {
   let success = req.flash("success");
-  let Products = await productModel.find();
-  res.render("shop", { Products, success, user: req.user });
+  const Products = await productModel.find();
+  res.render("shop", { Products,success, user: req.user });
 });
 
 router.get("/shop/collection", logged, async (req, res) => {
