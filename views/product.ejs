@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= product.name %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-gray-100">
+    <%- include('./partials/header') %> <% if(success.length>0){ %>
+    <div
+      class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-blue-500"
+    >
+      <span class="inline-block mt-1 mb-1 text-white"> <%= success %> </span>
+    </div>
+    <% } %>
+    <div class="max-w-6xl mx-auto p-6">
+      <!-- PRODUCT SECTION -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-6 rounded shadow"
+      >
+        <!-- Image -->
+        <div class="bg-[<%= product.bgColor %>] p-6 rounded">
+          <img
+            src="/uploads/<%= product.image %>"
+            class="w-full h-96 object-contain"
+          />
+        </div>
+
+        <!-- Info -->
+        <div>
+          <h1 class="text-3xl font-bold"><%= product.name %></h1>
+          <p class="text-gray-500 mt-1"><%= product.category %></p>
+
+          <p class="mt-4 text-lg"><%= product.description %></p>
+
+          <!-- Price -->
+          <p class="text-2xl text-green-600 font-bold mt-4">
+            ₹<%= product.price %>
+          </p>
+
+          <!-- Actions -->
+          <div class="flex gap-4 mt-6">
+            <!-- Add to Cart -->
+            <form action="/addtocart/<%= product._id %>" method="POST">
+              <button class="bg-blue-500 text-white px-5 py-2 rounded">
+                Add to Cart
+              </button>
+            </form>
+
+            <!-- Wishlist -->
+            <form action="/users/wishlist/add/<%= product._id %>" method="POST">
+              <button class="hover:text-red-500 text-2xl">
+                <i class="ri-heart-line"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVIEWS SECTION -->
+      <div class="mt-10">
+        <h3 class="text-2xl font-bold mb-4">Reviews</h3>
+
+        <% if (product.reviews.length === 0) { %>
+        <p class="text-gray-500">No reviews yet</p>
+        <% } else { %>
+
+        <div class="space-y-4">
+          <% product.reviews.forEach(r => { %>
+          <div class="bg-white p-4 rounded shadow">
+            <p class="font-medium">
+              <%= r.user?.username || "User" %> - <%= r.rating %> ⭐
+            </p>
+
+            <p class="text-gray-600"><%= r.comment %></p>
+          </div>
+          <% }) %>
+        </div>
+
+        <% } %>
+
+        <!-- ADD REVIEW -->
+        <h4 class="mt-6 font-semibold">Add Review</h4>
+
+        <form
+          action="/products/<%= product._id %>/review"
+          method="POST"
+          class="space-y-2 mt-2"
+        >
+          <input
+            type="number"
+            name="rating"
+            min="1"
+            max="5"
+            required
+            placeholder="Rating (1-5)"
+            class="border p-2 rounded w-full"
+          />
+
+          <textarea
+            name="comment"
+            required
+            placeholder="Write your review..."
+            class="border p-2 rounded w-full"
+          ></textarea>
+
+          <button class="bg-blue-500 text-white px-4 py-2 rounded">
+            Submit Review
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <%- include('./partials/footer') %>
+  </body>
+</html>

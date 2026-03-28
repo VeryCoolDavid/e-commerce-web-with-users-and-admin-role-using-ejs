@@ -70,37 +70,42 @@
       <div class="w-[75%] h-screen flex flex-col gap-5">
         <div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-6">
           <% Products.forEach(function(product){ %>
-          <div class="relative">
-            <form action="/users/wishlist/add/<%= product._id %>" method="POST">
-              <button class="absolute top-0 right-1">
-                <i class="ri-heart-line hover:text-red-600"></i>
-              </button>
-            </form>
-            <div
-              class="w-full h-52 flex items-center justify-center bg-[<%= product.bgColor %>]"
-            >
-              <img
-                class="h-[12rem]"
-                src="/uploads/<%= product.image %>"
-                alt="product image"
-              />
-            </div>
-            <div
-              class="flex justify-between items-center px-4 py-4 bg-[<%= product.panelColor %>] text-[<%= product.textColor %>]"
-            >
-              <div>
-                <h3><%= product.name %></h3>
-                <h4>₹<%= product.price %></h4>
-              </div>
+          <a  class="hover:scale-105" href="/products/<%= product._id %>">
+            <div class="relative">
               <form
-                class="w-7 h-7 flex items-center justify-center rounded-full bg-white"
-                action="/addtocart/<%= product._id %>"
-                method="post"
+                action="/users/wishlist/add/<%= product._id %>"
+                method="POST"
               >
-                <button><i class="ri-add-line"></i></button>
+                <button class="absolute top-0 right-1">
+                  <i class="ri-heart-line hover:text-red-600"></i>
+                </button>
               </form>
+              <div
+                class="w-full h-52 flex items-center justify-center bg-[<%= product.bgColor %>]"
+              >
+                <img
+                  class="h-[12rem]"
+                  src="/uploads/<%= product.image %>"
+                  alt="product image"
+                />
+              </div>
+              <div
+                class="flex justify-between items-center px-4 py-4 bg-[<%= product.panelColor %>] text-[<%= product.textColor %>]"
+              >
+                <div>
+                  <h3><%= product.name %></h3>
+                  <h4>₹<%= product.price %></h4>
+                </div>
+                <form
+                  class="w-7 h-7 flex items-center justify-center rounded-full bg-white"
+                  action="/addtocart/<%= product._id %>"
+                  method="post"
+                >
+                  <button><i class="ri-add-line"></i></button>
+                </form>
+              </div>
             </div>
-          </div>
+          </a>
           <% }) %>
         </div>
       </div>

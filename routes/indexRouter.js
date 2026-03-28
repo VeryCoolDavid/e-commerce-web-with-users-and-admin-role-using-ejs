@@ -16,7 +16,7 @@ router.get("/", function (req, res) {
 router.get("/shop", logged, async function (req, res) {
   let success = req.flash("success");
   const Products = await productModel.find();
-  res.render("shop", { Products,success, user: req.user });
+  res.render("shop", { Products, success, user: req.user });
 });
 
 router.get("/shop/collection", logged, async (req, res) => {
@@ -53,7 +53,8 @@ router.get("/cart", logged, async function (req, res) {
 
   let finalTotal = calculateCartTotal(user.cart);
   let error = req.flash("error");
-  res.render("cart", { user, error, finalTotal });
+  let success = req.flash("success");
+  res.render("cart", { user, error, success, finalTotal });
 });
 
 router.post("/addtocart/:id", logged, async function (req, res) {
@@ -70,7 +71,7 @@ router.post("/addtocart/:id", logged, async function (req, res) {
   }
   await user.save();
   req.flash("success", "Added to cart");
-  res.redirect("/shop");
+  res.redirect("/cart");
 });
 
 router.post("/cart/update/:id", logged, async (req, res) => {

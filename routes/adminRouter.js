@@ -14,7 +14,7 @@ router.get("/", async function (req, res) {
   let Products = await productModel.find();
   const totalProducts = Products.length;
   const revenue = await getRevenueStats();
-  res.render("admin", { Products, totalProducts,revenue, success, error });
+  res.render("admin", { Products, totalProducts, revenue, success, error });
 });
 router.get("/orders", async function (req, res) {
   let orders = await orderModel
@@ -23,9 +23,9 @@ router.get("/orders", async function (req, res) {
     .populate("items.product")
     .sort({ createdAt: -1 });
 
-    const totalOrders=orders.length;
+  const totalOrders = orders.length;
   let success = req.flash("success");
-  res.render("adminOrders", { orders,totalOrders, success });
+  res.render("adminOrders", { orders, totalOrders, success });
 });
 
 router.post("/orders/:id/status", async function (req, res) {

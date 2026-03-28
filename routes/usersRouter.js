@@ -26,6 +26,8 @@ router.post("/wishlist/add/:productId", logged, async (req, res) => {
   await userModel.findByIdAndUpdate(req.user._id, {
     $addToSet: { wishlist: productId }, // prevents duplicates
   });
+
+  req.flash("success","Added to wishlist")
   res.redirect("/shop");
 });
 

@@ -45,6 +45,24 @@
           <h3 class="text-lg font-medium mb-3">Revenue</h3>
           <canvas id="revenueChart" class="w-full"></canvas>
         </div>
+        <div class="text-sm mt-10">
+          <p>
+            Weekly Revenue:
+            <b class="text-green-600">₹<%= revenue.weeklyRevenue %> </b>
+          </p>
+          <p>
+            Monthly Revenue:
+            <b class="text-green-600">₹<%= revenue.monthlyRevenue %> </b>
+          </p>
+          <p>
+            Yearly Revenue:
+            <b class="text-green-600">₹<%= revenue.yearlyRevenue %> </b>
+          </p>
+          <p>
+            Total Revenue:
+            <b class="text-green-600">₹<%= revenue.totalRevenue %></b>
+          </p>
+        </div>
       </div>
       <div class="w-[75%] bg-white flex shadow p-4 flex-col gap-5 h-screen">
         <div class="flex justify-between items-center">
@@ -95,7 +113,7 @@
       const revenueChart = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: ["Weekly", "Monthly", "Yearly"],
+          labels: ["Weekly", "Monthly", "Yearly", "All time"],
           datasets: [
             {
               label: "Revenue (₹)",
@@ -103,8 +121,9 @@
                 Number("<%= revenue.weeklyRevenue %>"),
                 Number("<%= revenue.monthlyRevenue %>"),
                 Number("<%= revenue.yearlyRevenue %>"),
+                Number("<%= revenue.totalRevenue %>"),
               ],
-              backgroundColor: ["#3B82F6", "#10B981", "#F59E0B"],
+              backgroundColor: ["#3B82F6", "#10B981", "#F59E0B", "#9333EA"],
             },
           ],
         },
